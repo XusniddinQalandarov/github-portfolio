@@ -1,4 +1,9 @@
+const express = require('express');
+const nodemailer = require('nodemailer');
 require('dotenv').config();
+
+const app = express();
+app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
 let transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -8,17 +13,25 @@ let transporter = nodemailer.createTransport({
   }
 });
 
-let mailOptions = {
-  from: 'your-email@gmail.com',
-  to: 'your-email@gmail.com',
-  subject: 'New Subscriber',
-  text: 'You have a new subscriber with the following email: subscriber-email@example.com'
-};
+app.post('/subscribe', (req, res) => {
+    let subscriberEmail = req.body.email;  
 
-transporter.sendMail(mailOptions, function(error, info){
-  if (error) {
-    console.log(error);
-  } else {
-    console.log('Email sent: ' + info.response);
-  }
+    let mailOptions = {
+        from: 'xusniddinqalandarov2004@gmail.com',
+        to: 'xusniddinqalandarov2004@gmail.com',
+        subject: 'New Subscriber',
+        text: `You have a new subscriber with the following email: ${subscriberEmail}`
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+
+    res.send('Subscription successful');
 });
+
+app.listen(3000, () => console.log('Server started on port 3000'));
